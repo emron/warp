@@ -27,16 +27,14 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const RUNNER_MAGIC: &[u8] = b"tVQhhsFFlGGD3oWV4lEPST8I8FEPP54IM0q7daes4E1y3p2U2wlJRYmWmjPYfkhZ0PlT14Ls0j8fdDkoj33f2BlRJavLj3mWGibJsGt5uLAtrCDtvxikZ8UX2mQDCrgE\0";
 
-const RUNNER_LINUX_X64: &[u8] = include_bytes!("../../target/x86_64-unknown-linux-gnu/release/warp-runner");
-const RUNNER_MACOS_X64: &[u8] = include_bytes!("../../target/x86_64-apple-darwin/release/warp-runner");
-const RUNNER_WINDOWS_X64: &[u8] = include_bytes!("../../target/x86_64-pc-windows-gnu/release/warp-runner.exe");
+const RUNNER_WINDOWS_X64: &[u8] = include_bytes!("../../target/x86_64-pc-windows-msvc/release/warp-runner.exe");
+const RUNNER_WINDOWS_X86: &[u8] = include_bytes!("../../target/i686-pc-windows-msvc/release/warp-runner.exe");
 
 lazy_static! {
     static ref RUNNER_BY_ARCH: HashMap<&'static str, &'static [u8]> = {
         let mut m = HashMap::new();
-        m.insert("linux-x64", RUNNER_LINUX_X64);
-        m.insert("macos-x64", RUNNER_MACOS_X64);
         m.insert("windows-x64", RUNNER_WINDOWS_X64);
+        m.insert("windows-x86", RUNNER_WINDOWS_X86);
         m
     };
 }
@@ -116,7 +114,7 @@ fn create_app(runner_buf: &Vec<u8>, tgz_path: &Path, out: &Path) -> io::Result<(
     Ok(())
 }
 
-fn main() -> Result<(), Box<Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let args = App::new(APP_NAME)
         .settings(&[AppSettings::ArgRequiredElseHelp, AppSettings::ColoredHelp])
         .version(VERSION)
